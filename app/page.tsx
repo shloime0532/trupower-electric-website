@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
 /* ─────────────────────── INTERSECTION OBSERVER HOOK ─────────────────────── */
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.01) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -18,7 +18,7 @@ function useInView(threshold = 0.15) {
           obs.disconnect();
         }
       },
-      { threshold }
+      { threshold, rootMargin: "0px 0px 100px 0px" }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -237,7 +237,7 @@ function StatItem({
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const statRef = useInView(0.3);
+  const statRef = useInView(0.01);
 
   /* ── Scroll handler for nav shadow ── */
   useEffect(() => {
