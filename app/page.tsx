@@ -246,21 +246,33 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  /* ── Fade-up observer ── */
+  /* ── Add js-ready class + Fade-up observer ── */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    let observer: IntersectionObserver | null = null;
+
+    // Add js-ready to enable CSS transitions, then observe
+    document.documentElement.classList.add("js-ready");
+
+    // Use rAF to let the browser paint the hidden state first
+    const raf = requestAnimationFrame(() => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer?.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.05, rootMargin: "0px 0px 50px 0px" }
+      );
+      document.querySelectorAll(".fade-up").forEach((el) => observer!.observe(el));
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      observer?.disconnect();
+    };
   }, []);
 
   const scrollTo = useCallback((id: string) => {

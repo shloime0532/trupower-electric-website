@@ -31,17 +31,20 @@ body {
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 88px;
 }
 
-/* Fade-up animation */
+/* Fade-up animation — visible by default for SSR/crawlers, hidden by JS */
 .fade-up {
+  opacity: 1;
+  transform: translateY(0);
+}
+.js-ready .fade-up {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
-.fade-up.visible {
+.js-ready .fade-up.visible {
   opacity: 1;
   transform: translateY(0);
 }
