@@ -29,10 +29,13 @@ function useInView(threshold = 0.01) {
 
 /* ─────────────────────── ANIMATED COUNTER HOOK ─────────────────────── */
 function useCounter(target: number, visible: boolean, duration = 2000) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || hasAnimated.current) return;
+    hasAnimated.current = true;
+    setCount(0);
     let start = 0;
     const increment = target / (duration / 16);
     const timer = setInterval(() => {
